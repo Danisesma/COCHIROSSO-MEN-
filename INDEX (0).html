@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Cochirosso — Sistema de gestión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --fondo:#191210;
+    --carbon:#241a16;
+    --carbon-2:#2e211c;
+    --linea:#3d2c25;
+    --rojo:#e2453c;
+    --rojo-osc:#b8332c;
+    --rosa:#f2a68e;
+    --crema:#f5e9dd;
+    --gris:#b8a598;
+    --verde:#6fbf7f;
+    --ambar:#e8a94a;
+    --radio:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--fondo);
+    color:var(--crema);
+    font-family:'Sora',system-ui,sans-serif;
+    font-size:15px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .marquesina{
+    text-align:center;
+    padding:26px 16px 18px;
+    border-bottom:3px solid var(--rojo);
+    background:
+      radial-gradient(ellipse at 50% -40%, rgba(226,69,60,.28), transparent 60%),
+      var(--fondo);
+  }
+  .marquesina h1{
+    font-family:'Alfa Slab One',serif;
+    font-weight:400;
+    font-size:clamp(28px,6vw,44px);
+    letter-spacing:.02em;
+    color:var(--crema);
+    line-height:1;
+  }
+  .marquesina h1 .rosso{color:var(--rojo)}
+  .marquesina p{
+    margin-top:6px;
+    color:var(--gris);
+    font-size:12px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+  }
+  nav{
+    display:flex;
+    gap:6px;
+    padding:12px 12px 0;
+    max-width:1080px;
+    margin:0 auto;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  nav::-webkit-scrollbar{display:none}
+  nav button{
+    flex:0 0 auto;
+    background:var(--carbon);
+    color:var(--gris);
+    border:1px solid var(--linea);
+    border-bottom:none;
+    border-radius:10px 10px 0 0;
+    padding:11px 16px;
+    font-family:'Sora',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+  }
+  nav button.activa{
+    background:var(--carbon-2);
+    color:var(--crema);
+    border-color:var(--rojo);
+    border-bottom:none;
+    box-shadow:inset 0 3px 0 var(--rojo);
+  }
+  main{
+    max-width:1080px;
+    margin:0 auto;
+    padding:20px 14px 90px;
+  }
+  h2{
+    font-family:'Alfa Slab One',serif;
+    font-weight:400;
+    font-size:22px;
+    margin-bottom:4px;
+  }
+  .sub{color:var(--gris);font-size:13px;margin-bottom:18px}
+
+  .tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+  .tarjeta{
+    background:var(--carbon);
+    border:1px solid var(--linea);
+    border-radius:var(--radio);
+    padding:14px;
+  }
+  .tarjeta .etq{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}
+  .tarjeta .num{font-family:'Alfa Slab One',serif;font-size:24px;font-weight:400}
+  .num.verde{color:var(--verde)}
+  .num.rojo{color:var(--rojo)}
+  .num.ambar{color:var(--ambar)}
+
+  .panel{
+    background:var(--carbon);
+    border:1px solid var(--linea);
+    border-radius:var(--radio);
+    padding:16px;
+    margin-bottom:18px;
+  }
+  .panel h3{font-size:15px;font-weight:700;margin-bottom:12px}
+
+  .fila-form{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+  label.campo{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--gris);flex:1 1 130px}
+  input,select{
+    background:var(--fondo);
+    border:1px solid var(--linea);
+    border-radius:9px;
+    color:var(--crema);
+    padding:10px 10px;
+    font-family:'Sora',sans-serif;
+    font-size:14px;
+    width:100%;
+  }
+  input:focus,select:focus,button:focus-visible{outline:2px solid var(--rojo);outline-offset:1px}
+  .btn{
+    background:var(--rojo);
+    border:none;
+    color:#fff;
+    font-family:'Sora',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:11px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    flex:0 0 auto;
+  }
+  .btn:hover{background:var(--rojo-osc)}
+  .btn.secundario{background:var(--carbon-2);border:1px solid var(--linea);color:var(--crema)}
+  .btn.mini{padding:6px 10px;font-size:12px}
+  .btn.peligro{background:transparent;border:1px solid var(--linea);color:var(--gris)}
+  .btn.peligro:hover{border-color:var(--rojo);color:var(--rojo)}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{
+    text-align:left;color:var(--gris);font-size:11px;
+    text-transform:uppercase;letter-spacing:.1em;
+    padding:8px 8px;border-bottom:1px solid var(--linea);
+    white-space:nowrap;
+  }
+  td{padding:10px 8px;border-bottom:1px solid var(--linea);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  td.num-td,th.num-td{text-align:right;font-variant-numeric:tabular-nums}
+  tr.total-fila td{font-weight:700;border-top:2px solid var(--linea)}
+  .tabla-scroll{overflow-x:auto}
+
+  .pill{
+    display:inline-block;padding:3px 10px;border-radius:99px;
+    font-size:12px;font-weight:600;white-space:nowrap;
+  }
+  .pill.burro{background:rgba(232,169,74,.16);color:var(--ambar)}
+  .pill.torta{background:rgba(111,191,127,.16);color:var(--verde)}
+  .pill.ok{background:rgba(111,191,127,.16);color:var(--verde)}
+  .pill.bajo{background:rgba(226,69,60,.18);color:var(--rojo)}
+  .pill.efectivo{background:rgba(111,191,127,.16);color:var(--verde)}
+  .pill.transferencia{background:rgba(139,180,240,.16);color:#8bb4f0}
+  .pill.entrada{background:rgba(111,191,127,.16);color:var(--verde)}
+  .pill.salida{background:rgba(232,169,74,.16);color:var(--ambar)}
+  .pill.merma{background:rgba(226,69,60,.18);color:var(--rojo)}
+  .pill.fresco{background:rgba(111,191,127,.16);color:var(--verde)}
+  .pill.venderhoy{background:rgba(232,169,74,.18);color:var(--ambar)}
+  .pill.novender{background:rgba(226,69,60,.22);color:var(--rojo)}
+
+  .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
+  .prod-btn{
+    background:var(--carbon-2);
+    border:1px solid var(--linea);
+    border-radius:var(--radio);
+    color:var(--crema);
+    padding:14px 12px;
+    text-align:left;
+    cursor:pointer;
+    font-family:'Sora',sans-serif;
+    display:flex;flex-direction:column;gap:6px;
+    transition:transform .06s ease;
+  }
+  .prod-btn:hover{border-color:var(--rojo)}
+  .prod-btn:active{transform:scale(.97)}
+  .prod-btn .nombre{font-weight:700;font-size:14px;line-height:1.25}
+  .prod-btn .precio{font-family:'Alfa Slab One',serif;font-size:18px;color:var(--rosa)}
+  .prod-btn .stock-mini{font-size:11px;color:var(--gris)}
+  .prod-btn.agotado{opacity:.45}
+
+  .compra-item{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 12px;border:1px dashed var(--linea);
+    border-radius:10px;margin-bottom:8px;
+    background:var(--fondo);
+  }
+  .compra-item strong{flex:1}
+
+  .semana-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .semana-nav .rango{font-weight:700;font-size:15px}
+
+  dialog{
+    background:var(--carbon-2);
+    color:var(--crema);
+    border:1px solid var(--linea);
+    border-radius:var(--radio);
+    padding:20px;
+    max-width:340px;width:92%;
+    margin:auto;
+  }
+  dialog::backdrop{background:rgba(0,0,0,.6)}
+  .qty-fila{display:flex;align-items:center;gap:12px;justify-content:center;margin:14px 0}
+  .qty-fila button{
+    width:46px;height:46px;border-radius:12px;
+    background:var(--carbon);border:1px solid var(--linea);
+    color:var(--crema);font-size:22px;font-weight:700;cursor:pointer;
+  }
+  .qty-fila .qty{font-family:'Alfa Slab One',serif;font-size:30px;min-width:52px;text-align:center}
+  .pago-fila{display:flex;gap:8px;margin-bottom:14px}
+  .pago-fila button{
+    flex:1;padding:10px;border-radius:9px;cursor:pointer;
+    background:var(--carbon);border:1px solid var(--linea);color:var(--gris);
+    font-family:'Sora',sans-serif;font-weight:600;
+  }
+  .pago-fila button.sel{border-color:var(--rojo);color:var(--crema);background:rgba(226,69,60,.12)}
+
+  .progreso{background:var(--fondo);border:1px solid var(--linea);border-radius:99px;height:24px;overflow:hidden;position:relative}
+  .progreso .relleno{background:linear-gradient(90deg,var(--rojo),var(--ambar));height:100%;transition:width .3s ease}
+  .progreso .texto{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+
+  .carrito-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--linea)}
+  .carrito-item:last-child{border-bottom:none}
+  .carrito-item .ci-nombre{flex:1;font-weight:600;font-size:14px;min-width:0}
+  .carrito-item .ci-qbtn{width:34px;height:34px;border-radius:8px;background:var(--fondo);border:1px solid var(--linea);color:var(--crema);font-size:16px;font-weight:700;cursor:pointer;flex:0 0 auto}
+  .carrito-item .ci-cant{min-width:24px;text-align:center;font-weight:700}
+  .carrito-item .ci-sub{min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
+
+  .graf-barras{display:flex;align-items:flex-end;gap:10px;height:160px;padding-top:8px}
+  .graf-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+  .graf-col .barra{width:100%;max-width:58px;background:linear-gradient(180deg,var(--rojo),var(--rojo-osc));border-radius:6px 6px 0 0;min-height:3px}
+  .graf-col .glab{font-size:11px;color:var(--gris)}
+  .graf-col .gval{font-size:11px;font-weight:700}
+  .hbar-fila{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .hbar-fila .hlab{width:145px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hbar-fila .hpista{flex:1;background:var(--fondo);border-radius:6px;height:18px;overflow:hidden}
+  .hbar-fila .hrell{height:100%;background:linear-gradient(90deg,var(--ambar),var(--rojo));border-radius:6px}
+  .hbar-fila .hval{width:56px;text-align:right;font-size:12px;font-weight:700}
+  @media (max-width:560px){ .hbar-fila .hlab{width:105px;font-size:12px} }
+
+  .vacio{color:var(--gris);font-size:13px;text-align:center;padding:18px 0}
+  .aviso{
+    position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);
+    background:var(--carbon-2);border:1px solid var(--rojo);
+    color:var(--crema);padding:12px 20px;border-radius:12px;
+    font-weight:600;font-size:14px;opacity:0;transition:all .25s ease;
+    z-index:99;box-shadow:0 8px 30px rgba(0,0,0,.5);
+    max-width:90%;text-align:center;
+  }
+  .aviso.ver{opacity:1;transform:translateX(-50%) translateY(0)}
+  .cargando{text-align:center;padding:60px 20px;color:var(--gris)}
+  @media (prefers-reduced-motion:reduce){
+    .prod-btn,.aviso{transition:none}
+  }
+  @media (max-width:560px){
+    td,th{padding:8px 6px;font-size:13px}
+    .marquesina{padding:18px 12px 14px}
+  }
+</style>
+</head>
+<body>
+
+<header class="marquesina">
+  <h1>EL COCHI<span class="rosso">ROSSO</span></h1>
+  <p>Sistema de gestión · Burros y Tortas</p>
+</header>
+
+<nav id="nav">
+  <button data-tab="caja" class="activa">💰 Caja</button>
+  <button data-tab="semana">📅 Semana</button>
+  <button data-tab="ventas">🧾 Ventas</button>
+  <button data-tab="productos">📦 Productos</button>
+  <button data-tab="refri">🥘 Refri</button>
+  <button data-tab="gastos">🛒 Gastos</button>
+  <button data-tab="hielera">🧊 Hielera</button>
+  <button data-tab="encargos">📝 Encargos</button>
+</nav>
+
+<main id="main">
+  <div class="cargando">Cargando tus datos…</div>
+</main>
+
+<div class="aviso" id="aviso"></div>
+
+<dialog id="dlgVenta">
+  <h3 id="dlgVentaTitulo" style="margin-bottom:4px;font-family:'Alfa Slab One',serif;font-weight:400;font-size:18px"></h3>
+  <div id="dlgVentaPrecio" style="color:var(--gris);font-size:13px"></div>
+  <div id="dlgVentaAlerta" style="font-size:13px;margin-top:6px"></div>
+  <div class="qty-fila">
+    <button type="button" id="qMenos" aria-label="Menos">−</button>
+    <div class="qty" id="qNum">1</div>
+    <button type="button" id="qMas" aria-label="Más">+</button>
+  </div>
+  <div class="pago-fila">
+    <button type="button" data-pago="Efectivo" class="sel">Efectivo</button>
+    <button type="button" data-pago="Transferencia">Transferencia</button>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn secundario" style="flex:1" id="dlgCancelar">Cancelar</button>
+    <button class="btn" style="flex:1" id="dlgConfirmar">Cobrar</button>
+  </div>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const KEY = 'cochirosso_v1';
+const MX = n => '$' + Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+const hoyISO = () => { const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const fechaBonita = iso => { const [a,m,d]=iso.split('-'); const meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']; return `${+d} ${meses[+m-1]}`; };
+const fechaBonitaAnio = iso => { const [a,m,d]=iso.split('-'); const meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']; return `${+d} ${meses[+m-1]} ${a}`; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const sumaDias = (iso,n) => { const d=new Date(iso+'T12:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); };
+const lunesDe = iso => { const d=new Date(iso+'T12:00:00'); const dow=(d.getDay()+6)%7; d.setDate(d.getDate()-dow); return d.toISOString().slice(0,10); };
+const diasEntre = (isoViejo, isoNuevo) => Math.round((new Date(isoNuevo+'T12:00:00') - new Date(isoViejo+'T12:00:00'))/86400000);
+const DIAS_NOM = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+const seed = {
+  config: { fondo: 470 },
+  productos: [
+    {id:'p1', nombre:'Burro Adobada', cat:'Burro', sabor:'Adobada', costo:12, precio:30, stock:9, min:3},
+    {id:'p2', nombre:'Burro Chicharrón', cat:'Burro', sabor:'Chicharrón Prensado', costo:12, precio:30, stock:9, min:3},
+    {id:'p3', nombre:'Burro Papas Rojas', cat:'Burro', sabor:'Papa Roja', costo:10, precio:30, stock:8, min:3},
+    {id:'p4', nombre:'Burro Frijoles Maneados', cat:'Burro', sabor:'Frijoles Maneados', costo:10, precio:30, stock:0, min:3},
+    {id:'p5', nombre:'Burro Chamorro', cat:'Burro', sabor:'Chamorro', costo:15, precio:30, stock:0, min:3},
+    {id:'p6', nombre:'Torta Adobada', cat:'Torta', sabor:'Adobada', costo:35, precio:80, stock:0, min:2},
+    {id:'p7', nombre:'Torta Chicharrón', cat:'Torta', sabor:'Chicharrón Prensado', costo:35, precio:80, stock:0, min:2},
+    {id:'p8', nombre:'Torta Papa Roja', cat:'Torta', sabor:'Papa Roja', costo:30, precio:80, stock:0, min:2},
+    {id:'p9', nombre:'Torta Chamorro', cat:'Torta', sabor:'Chamorro', costo:40, precio:80, stock:0, min:2},
+  ],
+  guisos: [
+    {id:'g1', nombre:'Adobada', fecha:hoyISO(), nivel:'Bien', nota:''},
+    {id:'g2', nombre:'Chicharrón Prensado', fecha:hoyISO(), nivel:'Bien', nota:''},
+    {id:'g3', nombre:'Papa Roja', fecha:hoyISO(), nivel:'Bien', nota:''},
+    {id:'g4', nombre:'Frijoles Maneados', fecha:hoyISO(), nivel:'Poco', nota:''},
+    {id:'g5', nombre:'Chamorro', fecha:hoyISO(), nivel:'Se acabó', nota:''},
+  ],
+  ventas: [],
+  gastos: [],
+  movimientos: []
+};
+
+let D = null;
+let tab = 'caja';
+let fechaCaja = hoyISO();
+let semanaLunes = lunesDe(hoyISO());
+
+async function cargar(){
+  try{
+    const r = await window.storage.get(KEY);
+    D = JSON.parse(r.value);
+  }catch(e){
+    D = JSON.parse(JSON.stringify(seed));
+    await guardar();
+  }
+  // migración: agregar lo nuevo si venías de la versión anterior
+  let cambio = false;
+  if(!D.config){ D.config = { fondo: 470 }; cambio = true; }
+  if(!D.guisos){ D.guisos = JSON.parse(JSON.stringify(seed.guisos)); cambio = true; }
+  D.productos.forEach(p=>{
+    if(!('fechaHielera' in p)){ p.fechaHielera = p.stock>0 ? hoyISO() : null; cambio = true; }
+  });
+  if(!('metaDia' in D.config)){ D.config.metaDia = 1000; cambio = true; }
+  if(!D.cierres){ D.cierres = []; cambio = true; }
+  if(!D.encargos){ D.encargos = []; cambio = true; }
+  if(cambio) await guardar();
+  render();
+}
+async function guardar(){
+  try{
+    await window.storage.set(KEY, JSON.stringify(D));
+  }catch(e){
+    aviso('⚠️ No se pudo guardar. Revisa tu conexión.');
+  }
+}
+function aviso(msg){
+  const el = document.getElementById('aviso');
+  el.textContent = msg;
+  el.classList.add('ver');
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.classList.remove('ver'), 2600);
+}
+
+/* ---------- frescura de guisos ---------- */
+function frescura(fechaGuiso){
+  const dias = diasEntre(fechaGuiso, hoyISO());
+  if(dias <= 0) return {dias, clase:'fresco', txt:'Fresco (de hoy)'};
+  if(dias === 1) return {dias, clase:'venderhoy', txt:'De ayer · vender HOY'};
+  return {dias, clase:'novender', txt:`⛔ NO VENDER (${dias} días)`};
+}
+function guisoDeProducto(p){
+  return D.guisos.find(g => g.nombre.toLowerCase() === (p.sabor||'').toLowerCase());
+}
+
+/* ---------- navegación ---------- */
+document.getElementById('nav').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-tab]');
+  if(!b) return;
+  tab = b.dataset.tab;
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('activa', x===b));
+  render();
+});
+
+function render(){
+  const m = document.getElementById('main');
+  if(!D) return;
+  if(tab==='caja') m.innerHTML = vistaCaja();
+  else if(tab==='semana') m.innerHTML = vistaSemana();
+  else if(tab==='ventas') m.innerHTML = vistaVentas();
+  else if(tab==='productos') m.innerHTML = vistaProductos();
+  else if(tab==='refri') m.innerHTML = vistaRefri();
+  else if(tab==='gastos') m.innerHTML = vistaGastos();
+  else if(tab==='hielera') m.innerHTML = vistaHielera();
+  else if(tab==='encargos') m.innerHTML = vistaEncargos();
+  enganchar();
+}
+
+/* ---------- CAJA (día) ---------- */
+function vistaCaja(){
+  const vs = D.ventas.filter(v=>v.fecha===fechaCaja);
+  const gs = D.gastos.filter(g=>g.fecha===fechaCaja);
+  const totVentas = vs.reduce((s,v)=>s+v.total,0);
+  const totGastos = gs.reduce((s,g)=>s+g.monto,0);
+  const neta = totVentas - totGastos;
+  const unidades = vs.reduce((s,v)=>s+v.cantidad,0);
+  const efectivo = vs.filter(v=>v.pago==='Efectivo').reduce((s,v)=>s+v.total,0);
+  const transf = vs.filter(v=>v.pago==='Transferencia').reduce((s,v)=>s+v.total,0);
+  const esLunes = new Date(fechaCaja+'T12:00:00').getDay()===1;
+  const fondo = D.config.fondo || 0;
+
+  // meta del día
+  const meta = D.config.metaDia || 0;
+  const pctMeta = meta>0 ? Math.min(100, Math.round(totVentas/meta*100)) : 0;
+  const metaHTML = `
+    <div class="panel">
+      <h3>🎯 Meta del día</h3>
+      <div class="progreso" style="margin-bottom:10px">
+        <div class="relleno" style="width:${pctMeta}%"></div>
+        <div class="texto">${MX(totVentas)} de ${MX(meta)} · ${pctMeta}%</div>
+      </div>
+      <div class="fila-form">
+        <span style="flex:1;font-size:13px;color:var(--gris)">
+          ${pctMeta>=100 ? '🔥 ¡Meta cumplida! Lo que sigue es pura ganancia extra.' :
+            totVentas>0 ? `Te faltan ${MX(Math.max(0,meta-totVentas))} para la meta.` :
+            'Aún sin ventas este día.'}
+        </span>
+        <label class="campo" style="max-width:160px">Cambiar meta
+          <input type="number" id="metaInput" min="0" step="50" value="${meta}">
+        </label>
+      </div>
+    </div>`;
+
+  // cierre del día
+  const cierre = D.cierres.find(c=>c.fecha===fechaCaja);
+  const esperadoEfectivo = efectivo - totGastos;
+  let cierreHTML;
+  if(cierre){
+    const dif = cierre.diferencia;
+    const msg = dif===0 ? `<span class="pill ok">✅ ¡Cuadró perfecto!</span>` :
+                dif>0 ? `<span class="pill venderhoy">Sobraron ${MX(dif)}</span>` :
+                `<span class="pill novender">Faltaron ${MX(-dif)}</span>`;
+    cierreHTML = `
+    <div class="panel">
+      <h3>🌙 Día cerrado</h3>
+      <div class="tarjetas" style="margin-bottom:10px">
+        <div class="tarjeta"><div class="etq">Efectivo esperado</div><div class="num">${MX(cierre.esperado)}</div></div>
+        <div class="tarjeta"><div class="etq">Efectivo contado</div><div class="num">${MX(cierre.contado)}</div></div>
+        <div class="tarjeta"><div class="etq">Resultado</div><div class="num ${dif===0?'verde':(dif>0?'ambar':'rojo')}">${dif>=0?'+':''}${MX(dif)}</div></div>
+      </div>
+      ${msg}
+      <div style="margin-top:12px"><button class="btn secundario mini" id="btnReabrirCierre">Volver a contar</button></div>
+    </div>`;
+  } else {
+    cierreHTML = `
+    <div class="panel">
+      <h3>🌙 Cerrar el día</h3>
+      <p style="font-size:13px;color:var(--gris);margin-bottom:12px">
+        Según el sistema, en efectivo deberías tener <strong style="color:var(--crema)">${MX(esperadoEfectivo)}</strong>
+        (ventas en efectivo ${MX(efectivo)} − gastos ${MX(totGastos)}), sin contar tu fondo de cambio.
+        Cuenta el dinero de la caja y anótalo aquí para ver si cuadra:
+      </p>
+      <div class="fila-form">
+        <label class="campo" style="max-width:190px">💵 Efectivo contado
+          <input type="number" id="cierreContado" min="0" step="0.5" placeholder="0.00">
+        </label>
+        <button class="btn" id="btnCerrarDia">Cerrar el día</button>
+      </div>
+    </div>`;
+  }
+
+  const filasV = vs.slice().reverse().map(v=>`
+    <tr>
+      <td>${v.hora||''}</td>
+      <td>${escapa(v.producto)}</td>
+      <td class="num-td">${v.cantidad}</td>
+      <td class="num-td">${MX(v.total)}</td>
+      <td><span class="pill ${v.pago==='Efectivo'?'efectivo':'transferencia'}">${v.pago}</span></td>
+      <td><button class="btn peligro mini" data-del-venta="${v.id}">✕</button></td>
+    </tr>`).join('');
+
+  const filasG = gs.slice().reverse().map(g=>`
+    <tr>
+      <td>${escapa(g.concepto)}</td>
+      <td><span class="pill burro">${escapa(g.cat)}</span></td>
+      <td class="num-td">${MX(g.monto)}</td>
+      <td><button class="btn peligro mini" data-del-gasto="${g.id}">✕</button></td>
+    </tr>`).join('');
+
+  return `
+    <h2>Corte de caja del día</h2>
+    <p class="sub">Todo se calcula solo. ${esLunes ? `Hoy es <strong>lunes</strong>: la caja arranca con tu fondo de ${MX(fondo)} para cambio.` : ''}</p>
+    <div class="panel">
+      <div class="fila-form">
+        <label class="campo" style="max-width:190px">Fecha
+          <input type="date" id="fechaCaja" value="${fechaCaja}">
+        </label>
+        <button class="btn secundario" id="btnHoy">Hoy</button>
+      </div>
+    </div>
+    <div class="tarjetas">
+      ${esLunes ? `<div class="tarjeta"><div class="etq">Fondo (cambio)</div><div class="num ambar">${MX(fondo)}</div></div>` : ''}
+      <div class="tarjeta"><div class="etq">Ventas del día</div><div class="num verde">${MX(totVentas)}</div></div>
+      <div class="tarjeta"><div class="etq">Gastos del día</div><div class="num rojo">${MX(totGastos)}</div></div>
+      <div class="tarjeta"><div class="etq">Caja neta</div><div class="num ${neta>=0?'verde':'rojo'}">${MX(neta)}</div></div>
+      ${esLunes ? `<div class="tarjeta"><div class="etq">En caja (fondo + neta)</div><div class="num ${fondo+neta>=0?'verde':'rojo'}">${MX(fondo+neta)}</div></div>` : ''}
+      <div class="tarjeta"><div class="etq">Piezas vendidas</div><div class="num">${unidades}</div></div>
+      <div class="tarjeta"><div class="etq">Efectivo</div><div class="num">${MX(efectivo)}</div></div>
+      <div class="tarjeta"><div class="etq">Transferencia</div><div class="num">${MX(transf)}</div></div>
+    </div>
+    ${metaHTML}
+    ${cierreHTML}
+    <div class="panel">
+      <h3>Ventas · ${fechaBonitaAnio(fechaCaja)}</h3>
+      <div class="tabla-scroll">
+      ${vs.length ? `<table><thead><tr><th>Hora</th><th>Producto</th><th class="num-td">Cant.</th><th class="num-td">Total</th><th>Pago</th><th></th></tr></thead><tbody>${filasV}</tbody></table>` : `<div class="vacio">Sin ventas este día. Regístralas en la pestaña 🧾 Ventas.</div>`}
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Gastos · ${fechaBonitaAnio(fechaCaja)}</h3>
+      <div class="tabla-scroll">
+      ${gs.length ? `<table><thead><tr><th>Concepto</th><th>Categoría</th><th class="num-td">Monto</th><th></th></tr></thead><tbody>${filasG}</tbody></table>` : `<div class="vacio">Sin gastos este día.</div>`}
+      </div>
+    </div>`;
+}
+
+/* ---------- SEMANA (corte Lun–Sáb) ---------- */
+function vistaSemana(){
+  const ini = semanaLunes;
+  const fin = sumaDias(ini, 5); // sábado
+  const dias = []; for(let i=0;i<6;i++) dias.push(sumaDias(ini,i));
+  const enSemana = f => f >= ini && f <= fin;
+
+  const vs = D.ventas.filter(v=>enSemana(v.fecha));
+  const gs = D.gastos.filter(g=>enSemana(g.fecha));
+  const ms = D.movimientos.filter(m=>enSemana(m.fecha));
+
+  const totVentas = vs.reduce((s,v)=>s+v.total,0);
+  const totGastos = gs.reduce((s,g)=>s+g.monto,0);
+  const piezas = vs.reduce((s,v)=>s+v.cantidad,0);
+  const fondo = D.config.fondo || 0;
+  const cajaFinal = fondo + totVentas - totGastos;
+  const gananciaSemana = totVentas - totGastos;
+
+  // por día
+  const datosDia = dias.map((f,i)=>({
+    nombre: DIAS_NOM[i], fecha: f,
+    ventas: vs.filter(v=>v.fecha===f).reduce((s,v)=>s+v.total,0),
+    gastos: gs.filter(g=>g.fecha===f).reduce((s,g)=>s+g.monto,0),
+    piezas: vs.filter(v=>v.fecha===f).reduce((s,v)=>s+v.cantidad,0)
+  }));
+  const filasDia = datosDia.map(d=>`<tr>
+      <td><strong>${d.nombre}</strong> <span style="color:var(--gris);font-size:12px">${fechaBonita(d.fecha)}</span></td>
+      <td class="num-td">${d.piezas}</td>
+      <td class="num-td" style="color:var(--verde)">${MX(d.ventas)}</td>
+      <td class="num-td" style="color:var(--rojo)">${MX(d.gastos)}</td>
+      <td class="num-td"><strong>${MX(d.ventas-d.gastos)}</strong></td>
+    </tr>`).join('');
+
+  // gráfica de barras por día
+  const maxDia = Math.max(...datosDia.map(d=>d.ventas), 1);
+  const grafDias = datosDia.map(d=>`
+    <div class="graf-col">
+      <span class="gval">${d.ventas>0 ? '$'+Math.round(d.ventas) : ''}</span>
+      <div class="barra" style="height:${Math.max(2, Math.round(d.ventas/maxDia*100))}%"></div>
+      <span class="glab">${d.nombre.slice(0,3)}</span>
+    </div>`).join('');
+
+  // por producto
+  const porProd = {};
+  vs.forEach(v=>{
+    if(!porProd[v.producto]) porProd[v.producto] = {cant:0, total:0};
+    porProd[v.producto].cant += v.cantidad;
+    porProd[v.producto].total += v.total;
+  });
+  const filasProd = Object.entries(porProd).sort((a,b)=>b[1].total-a[1].total).map(([nom,x])=>`
+    <tr><td>${escapa(nom)}</td><td class="num-td">${x.cant}</td><td class="num-td">${MX(x.total)}</td></tr>`).join('');
+
+  // gráfica horizontal: qué producto vende más (por dinero)
+  const prodOrden = Object.entries(porProd).sort((a,b)=>b[1].total-a[1].total);
+  const maxProd = prodOrden.length ? prodOrden[0][1].total : 1;
+  const grafProds = prodOrden.map(([nom,x])=>`
+    <div class="hbar-fila">
+      <span class="hlab" title="${escapa(nom)}">${escapa(nom)}</span>
+      <div class="hpista"><div class="hrell" style="width:${Math.max(2, Math.round(x.total/maxProd*100))}%"></div></div>
+      <span class="hval">$${Math.round(x.total)}</span>
+    </div>`).join('');
+
+  // hielera de la semana
+  const porMov = {};
+  ms.forEach(mv=>{
+    if(!porMov[mv.producto]) porMov[mv.producto] = {Entrada:0, Salida:0, Merma:0};
+    porMov[mv.producto][mv.tipo] = (porMov[mv.producto][mv.tipo]||0) + mv.cantidad;
+  });
+  const filasMov = Object.entries(porMov).map(([nom,x])=>`
+    <tr><td>${escapa(nom)}</td>
+    <td class="num-td" style="color:var(--verde)">${x.Entrada||0}</td>
+    <td class="num-td" style="color:var(--ambar)">${x.Salida||0}</td>
+    <td class="num-td" style="color:var(--rojo)">${x.Merma||0}</td></tr>`).join('');
+
+  return `
+    <h2>Corte semanal</h2>
+    <p class="sub">Semana de lunes a sábado. Todo lo que registres queda guardado por semana; navega con las flechas para ver semanas pasadas.</p>
+    <div class="panel">
+      <div class="semana-nav">
+        <button class="btn secundario" id="semAnt">← Anterior</button>
+        <div class="rango">Lun ${fechaBonita(ini)} — Sáb ${fechaBonita(fin)}</div>
+        <button class="btn secundario" id="semSig">Siguiente →</button>
+        <button class="btn secundario" id="semHoy">Esta semana</button>
+        <button class="btn" id="btnExportar">📥 Exportar respaldo</button>
+        <label class="campo" style="max-width:200px;margin-left:auto">Fondo de caja (lunes)
+          <input type="number" id="fondoInput" min="0" step="10" value="${fondo}">
+        </label>
+      </div>
+    </div>
+    <div class="tarjetas">
+      <div class="tarjeta"><div class="etq">Fondo inicial (lunes)</div><div class="num ambar">${MX(fondo)}</div></div>
+      <div class="tarjeta"><div class="etq">Ventas de la semana</div><div class="num verde">${MX(totVentas)}</div></div>
+      <div class="tarjeta"><div class="etq">Gastos de la semana</div><div class="num rojo">${MX(totGastos)}</div></div>
+      <div class="tarjeta"><div class="etq">Ganancia semanal</div><div class="num ${gananciaSemana>=0?'verde':'rojo'}">${MX(gananciaSemana)}</div></div>
+      <div class="tarjeta"><div class="etq">Caja al cierre (sábado)</div><div class="num ${cajaFinal>=0?'verde':'rojo'}">${MX(cajaFinal)}</div></div>
+      <div class="tarjeta"><div class="etq">Piezas vendidas</div><div class="num">${piezas}</div></div>
+    </div>
+    <div class="panel">
+      <h3>📊 ¿Qué día vendes más?</h3>
+      ${totVentas>0 ? `<div class="graf-barras">${grafDias}</div>` : `<div class="vacio">Registra ventas y aquí verás tu gráfica de la semana.</div>`}
+    </div>
+    <div class="panel">
+      <h3>🏆 ¿Qué producto te deja más?</h3>
+      ${prodOrden.length ? grafProds : `<div class="vacio">Sin ventas esta semana.</div>`}
+    </div>
+    <div class="panel">
+      <h3>Día por día</h3>
+      <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Día</th><th class="num-td">Piezas</th><th class="num-td">Ventas</th><th class="num-td">Gastos</th><th class="num-td">Neta</th></tr></thead>
+        <tbody>${filasDia}
+        <tr class="total-fila"><td>TOTAL</td><td class="num-td">${piezas}</td><td class="num-td" style="color:var(--verde)">${MX(totVentas)}</td><td class="num-td" style="color:var(--rojo)">${MX(totGastos)}</td><td class="num-td">${MX(gananciaSemana)}</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Ventas por producto (la semana)</h3>
+      <div class="tabla-scroll">
+      ${filasProd ? `<table><thead><tr><th>Producto</th><th class="num-td">Piezas</th><th class="num-td">Total</th></tr></thead><tbody>${filasProd}</tbody></table>` : `<div class="vacio">Sin ventas esta semana.</div>`}
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Corte de hielera (la semana)</h3>
+      <div class="tabla-scroll">
+      ${filasMov ? `<table><thead><tr><th>Producto</th><th class="num-td">Entradas</th><th class="num-td">Salidas</th><th class="num-td">Mermas</th></tr></thead><tbody>${filasMov}</tbody></table>` : `<div class="vacio">Sin movimientos de hielera esta semana.</div>`}
+      </div>
+    </div>`;
+}
+
+/* ---------- VENTAS (con ticket/carrito) ---------- */
+let carrito = {};        // productoId -> cantidad
+let carritoPago = 'Efectivo';
+
+function vistaVentas(){
+  const botones = D.productos.map(p=>{
+    const sinStock = p.stock<=0;
+    const fr = (!sinStock && p.fechaHielera) ? frescura(p.fechaHielera) : null;
+    const alerta = fr && fr.clase==='novender' ? `<span class="pill novender" style="font-size:10px">⛔ 2+ días</span>` :
+                   fr && fr.clase==='venderhoy' ? `<span class="pill venderhoy" style="font-size:10px">de ayer</span>` : '';
+    const enCarrito = carrito[p.id] ? `<span class="pill ok" style="font-size:10px">🛒 ${carrito[p.id]} en ticket</span>` : '';
+    return `<button class="prod-btn ${sinStock?'agotado':''}" data-cart-add="${p.id}">
+      <span class="nombre">${escapa(p.nombre)}</span>
+      <span class="precio">${MX(p.precio)}</span>
+      <span class="stock-mini">${sinStock?'Sin stock':'Stock: '+p.stock}</span>
+      ${alerta}${enCarrito}
+    </button>`;
+  }).join('');
+
+  // panel del ticket
+  const items = Object.entries(carrito).map(([pid,cant])=>{
+    const p = D.productos.find(x=>x.id===pid);
+    if(!p) return '';
+    return `<div class="carrito-item">
+      <span class="ci-nombre">${escapa(p.nombre)}</span>
+      <button class="ci-qbtn" data-cart-menos="${pid}">−</button>
+      <span class="ci-cant">${cant}</span>
+      <button class="ci-qbtn" data-cart-mas="${pid}">+</button>
+      <span class="ci-sub">${MX(p.precio*cant)}</span>
+      <button class="ci-qbtn" data-cart-quitar="${pid}" style="color:var(--rojo)">✕</button>
+    </div>`;
+  }).join('');
+  const totalTicket = Object.entries(carrito).reduce((s,[pid,cant])=>{
+    const p = D.productos.find(x=>x.id===pid);
+    return p ? s + p.precio*cant : s;
+  },0);
+  const nPiezas = Object.values(carrito).reduce((s,c)=>s+c,0);
+
+  const ticketHTML = nPiezas>0 ? `
+    <div class="panel" style="border-color:var(--rojo)">
+      <h3>🛒 Ticket actual · ${nPiezas} pieza${nPiezas===1?'':'s'}</h3>
+      ${items}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 10px;font-size:16px">
+        <strong>Total</strong>
+        <strong style="font-family:'Alfa Slab One',serif;font-size:22px;color:var(--rosa)">${MX(totalTicket)}</strong>
+      </div>
+      <div class="pago-fila">
+        <button type="button" data-cart-pago="Efectivo" class="${carritoPago==='Efectivo'?'sel':''}">Efectivo</button>
+        <button type="button" data-cart-pago="Transferencia" class="${carritoPago==='Transferencia'?'sel':''}">Transferencia</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn peligro" style="flex:1" id="btnVaciarTicket">Vaciar</button>
+        <button class="btn" style="flex:2" id="btnCobrarTicket">💵 Cobrar ${MX(totalTicket)}</button>
+      </div>
+    </div>` : '';
+
+  const hoy = hoyISO();
+  const vsHoy = D.ventas.filter(v=>v.fecha===hoy).slice().reverse().slice(0,10);
+  const filas = vsHoy.map(v=>`
+    <tr>
+      <td>${v.hora||''}</td>
+      <td>${escapa(v.producto)}</td>
+      <td class="num-td">${v.cantidad}</td>
+      <td class="num-td">${MX(v.total)}</td>
+      <td><span class="pill ${v.pago==='Efectivo'?'efectivo':'transferencia'}">${v.pago}</span></td>
+    </tr>`).join('');
+
+  return `
+    <h2>Venta rápida</h2>
+    <p class="sub">Toca los productos que pida el cliente (toca varias veces para más piezas), y cobra todo junto en un ticket. El stock se descuenta solo.</p>
+    ${ticketHTML}
+    <div class="menu-grid">${botones}</div>
+    <div class="panel" style="margin-top:18px">
+      <h3>Últimas ventas de hoy</h3>
+      <div class="tabla-scroll">
+      ${vsHoy.length ? `<table><thead><tr><th>Hora</th><th>Producto</th><th class="num-td">Cant.</th><th class="num-td">Total</th><th>Pago</th></tr></thead><tbody>${filas}</tbody></table>` : `<div class="vacio">Aún no hay ventas hoy. ¡A darle!</div>`}
+      </div>
+    </div>`;
+}
+
+/* ---------- PRODUCTOS ---------- */
+function vistaProductos(){
+  const filas = D.productos.map(p=>{
+    const bajo = p.stock<=p.min;
+    return `<tr>
+      <td><strong>${escapa(p.nombre)}</strong><br><span style="color:var(--gris);font-size:12px">${escapa(p.sabor)}</span></td>
+      <td><span class="pill ${p.cat==='Burro'?'burro':'torta'}">${escapa(p.cat)}</span></td>
+      <td class="num-td">${MX(p.costo)}</td>
+      <td class="num-td">${MX(p.precio)}</td>
+      <td class="num-td">
+        <span style="display:inline-flex;align-items:center;gap:6px">
+          <button class="btn secundario mini" data-stock="-1" data-id="${p.id}">−</button>
+          <strong style="min-width:24px;display:inline-block;text-align:center">${p.stock}</strong>
+          <button class="btn secundario mini" data-stock="1" data-id="${p.id}">+</button>
+        </span>
+      </td>
+      <td class="num-td">${p.min}</td>
+      <td><span class="pill ${bajo?'bajo':'ok'}">${bajo?'BAJO':'OK'}</span></td>
+      <td class="num-td" style="color:var(--verde)">${MX(p.precio-p.costo)}</td>
+      <td><button class="btn peligro mini" data-del-prod="${p.id}">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <h2>Productos</h2>
+    <p class="sub">Tu menú con costos, precios y stock. La ganancia por pieza se calcula sola.</p>
+    <div class="panel">
+      <h3>Agregar producto</h3>
+      <div class="fila-form">
+        <label class="campo">Nombre<input id="pNombre" placeholder="Burro Deshebrada"></label>
+        <label class="campo" style="max-width:130px">Categoría
+          <select id="pCat"><option>Burro</option><option>Torta</option><option>Otro</option></select>
+        </label>
+        <label class="campo">Sabor / guiso<input id="pSabor" placeholder="Deshebrada"></label>
+        <label class="campo" style="max-width:110px">Costo<input id="pCosto" type="number" min="0" step="0.5" placeholder="12"></label>
+        <label class="campo" style="max-width:110px">Precio<input id="pPrecio" type="number" min="0" step="0.5" placeholder="30"></label>
+        <label class="campo" style="max-width:100px">Stock<input id="pStock" type="number" min="0" value="0"></label>
+        <label class="campo" style="max-width:100px">Mínimo<input id="pMin" type="number" min="0" value="3"></label>
+        <button class="btn" id="btnAddProd">Agregar</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Producto</th><th>Cat.</th><th class="num-td">Costo</th><th class="num-td">Precio</th><th class="num-td">Stock</th><th class="num-td">Mín.</th><th>Estado</th><th class="num-td">Ganancia/pza</th><th></th></tr></thead>
+        <tbody>${filas || ''}</tbody>
+      </table>
+      </div>
+    </div>`;
+}
+
+/* ---------- REFRI (guisos + lista de compras) ---------- */
+function vistaRefri(){
+  const porComprar = D.guisos.filter(g=>g.nivel==='Poco' || g.nivel==='Se acabó');
+  const viejos = D.guisos.filter(g=>frescura(g.fecha).clase==='novender');
+
+  const listaCompras = porComprar.length
+    ? porComprar.map(g=>`
+      <div class="compra-item">
+        <span class="pill ${g.nivel==='Se acabó'?'novender':'venderhoy'}">${g.nivel==='Se acabó'?'URGE':'Queda poco'}</span>
+        <strong>${escapa(g.nombre)}</strong>
+        <span style="color:var(--gris);font-size:12px">${escapa(g.nota||'')}</span>
+      </div>`).join('')
+    : `<div class="vacio">🎉 No te falta nada por comprar.</div>`;
+
+  const filas = D.guisos.map(g=>{
+    const fr = frescura(g.fecha);
+    return `<tr>
+      <td><strong>${escapa(g.nombre)}</strong></td>
+      <td>${fechaBonitaAnio(g.fecha)}</td>
+      <td><span class="pill ${fr.clase}">${fr.txt}</span></td>
+      <td>
+        <select data-nivel="${g.id}" style="min-width:110px">
+          <option ${g.nivel==='Bien'?'selected':''}>Bien</option>
+          <option ${g.nivel==='Poco'?'selected':''}>Poco</option>
+          <option ${g.nivel==='Se acabó'?'selected':''}>Se acabó</option>
+        </select>
+      </td>
+      <td><input data-nota="${g.id}" value="${escapa(g.nota||'')}" placeholder="Ej. comprar 2 kg" style="min-width:120px"></td>
+      <td style="white-space:nowrap">
+        <button class="btn secundario mini" data-renovar="${g.id}" title="Guiso nuevo de hoy">🍳 Hoy</button>
+        <button class="btn peligro mini" data-del-guiso="${g.id}">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <h2>Refri · guisos</h2>
+    <p class="sub">Marca cómo anda cada guiso y la lista de compras se arma sola. Regla de frescura: lo de hoy es fresco, lo de ayer se vende hoy, y con 2 días ya <strong>no se vende</strong>.</p>
+    <div class="tarjetas">
+      <div class="tarjeta"><div class="etq">Guisos en refri</div><div class="num">${D.guisos.length}</div></div>
+      <div class="tarjeta"><div class="etq">Por comprar</div><div class="num ${porComprar.length?'ambar':'verde'}">${porComprar.length}</div></div>
+      <div class="tarjeta"><div class="etq">⛔ Ya no se venden</div><div class="num ${viejos.length?'rojo':'verde'}">${viejos.length}</div></div>
+    </div>
+    <div class="panel">
+      <h3>🛒 Lista de compras (automática)</h3>
+      ${listaCompras}
+    </div>
+    <div class="panel">
+      <h3>Guisos</h3>
+      <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Guiso</th><th>Hecho el</th><th>Frescura</th><th>¿Cuánto queda?</th><th>Nota</th><th></th></tr></thead>
+        <tbody>${filas}</tbody>
+      </table>
+      </div>
+      <p style="color:var(--gris);font-size:12px;margin-top:10px">💡 Cuando hagas guiso nuevo, toca <strong>🍳 Hoy</strong> para reiniciar su frescura.</p>
+    </div>
+    <div class="panel">
+      <h3>Agregar guiso</h3>
+      <div class="fila-form">
+        <label class="campo">Nombre<input id="gsNombre" placeholder="Deshebrada"></label>
+        <label class="campo" style="max-width:170px">Hecho el<input id="gsFecha" type="date" value="${hoyISO()}"></label>
+        <label class="campo" style="max-width:150px">¿Cuánto hay?
+          <select id="gsNivel"><option>Bien</option><option>Poco</option><option>Se acabó</option></select>
+        </label>
+        <button class="btn" id="btnAddGuiso">Agregar</button>
+      </div>
+    </div>`;
+}
+
+/* ---------- ENCARGOS Y FIADOS ---------- */
+function vistaEncargos(){
+  const pendCobro = D.encargos.filter(e=>!e.pagado);
+  const porCobrar = pendCobro.reduce((s,e)=>s + Math.max(0, e.total - (e.anticipo||0)), 0);
+  const pendEntrega = D.encargos.filter(e=>!e.entregado).length;
+
+  const orden = D.encargos.slice().sort((a,b)=>{
+    const pa = (a.pagado&&a.entregado)?1:0, pb = (b.pagado&&b.entregado)?1:0;
+    if(pa!==pb) return pa-pb;
+    return (a.fechaEntrega||'').localeCompare(b.fechaEntrega||'');
+  });
+
+  const filas = orden.map(e=>{
+    const saldo = Math.max(0, e.total - (e.anticipo||0));
+    const listo = e.pagado && e.entregado;
+    return `<tr style="${listo?'opacity:.5':''}">
+      <td><strong>${escapa(e.cliente)}</strong>${e.tel?`<br><span style="color:var(--gris);font-size:12px">📞 ${escapa(e.tel)}</span>`:''}</td>
+      <td><span class="pill ${e.tipo==='Fiado'?'venderhoy':'torta'}">${e.tipo}</span></td>
+      <td style="max-width:220px">${escapa(e.pedido)}</td>
+      <td>${e.fechaEntrega ? fechaBonitaAnio(e.fechaEntrega) : '—'}</td>
+      <td class="num-td">${MX(e.total)}</td>
+      <td class="num-td">${e.anticipo ? MX(e.anticipo) : '—'}</td>
+      <td class="num-td"><strong style="color:${e.pagado?'var(--verde)':'var(--ambar)'}">${e.pagado ? 'Pagado ✓' : MX(saldo)}</strong></td>
+      <td style="white-space:nowrap">
+        ${!e.pagado ? `<button class="btn mini" data-enc-cobrar="${e.id}">💵 Cobrar</button>` : ''}
+        ${!e.entregado ? `<button class="btn secundario mini" data-enc-entregar="${e.id}">📦 Entregado</button>` : ''}
+        <button class="btn peligro mini" data-enc-borrar="${e.id}">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <h2>Encargos y fiados</h2>
+    <p class="sub">Pedidos por adelantado y clientes que pagan después. Cuando cobres, el dinero entra solo a tu corte de caja.</p>
+    <div class="tarjetas">
+      <div class="tarjeta"><div class="etq">💰 Por cobrar</div><div class="num ${porCobrar>0?'ambar':'verde'}">${MX(porCobrar)}</div></div>
+      <div class="tarjeta"><div class="etq">📦 Pendientes de entrega</div><div class="num">${pendEntrega}</div></div>
+      <div class="tarjeta"><div class="etq">Total registrados</div><div class="num">${D.encargos.length}</div></div>
+    </div>
+    <div class="panel">
+      <h3>Nuevo encargo o fiado</h3>
+      <div class="fila-form">
+        <label class="campo">Cliente<input id="eCliente" placeholder="Sra. Lupita"></label>
+        <label class="campo" style="max-width:150px">Teléfono (opcional)<input id="eTel" placeholder="871..."></label>
+        <label class="campo" style="max-width:130px">Tipo
+          <select id="eTipo"><option>Encargo</option><option>Fiado</option></select>
+        </label>
+        <label class="campo" style="flex:2 1 200px">¿Qué pidió?<input id="ePedido" placeholder="20 burros de adobada"></label>
+        <label class="campo" style="max-width:170px">Para cuándo<input id="eFecha" type="date" value="${hoyISO()}"></label>
+        <label class="campo" style="max-width:120px">Total<input id="eTotal" type="number" min="0" step="0.5" placeholder="600"></label>
+        <label class="campo" style="max-width:130px">Anticipo<input id="eAnticipo" type="number" min="0" step="0.5" value="0"></label>
+        <button class="btn" id="btnAddEncargo">Agregar</button>
+      </div>
+      <p style="color:var(--gris);font-size:12px;margin-top:10px">💡 Si te dan anticipo, se registra automáticamente como venta de hoy para que entre a tu caja.</p>
+    </div>
+    <div class="panel">
+      <div class="tabla-scroll">
+      ${D.encargos.length ? `<table><thead><tr><th>Cliente</th><th>Tipo</th><th>Pedido</th><th>Entrega</th><th class="num-td">Total</th><th class="num-td">Anticipo</th><th class="num-td">Debe</th><th></th></tr></thead><tbody>${filas}</tbody></table>` : `<div class="vacio">Sin encargos ni fiados. Cuando alguien te pida algo por adelantado, apúntalo aquí.</div>`}
+      </div>
+    </div>`;
+}
+
+/* ---------- GASTOS ---------- */
+function vistaGastos(){
+  const filas = D.gastos.slice().reverse().map(g=>`
+    <tr>
+      <td>${fechaBonitaAnio(g.fecha)}</td>
+      <td>${escapa(g.concepto)}</td>
+      <td><span class="pill burro">${escapa(g.cat)}</span></td>
+      <td class="num-td">${MX(g.monto)}</td>
+      <td><button class="btn peligro mini" data-del-gasto="${g.id}">✕</button></td>
+    </tr>`).join('');
+  const totalMes = D.gastos.filter(g=>g.fecha.slice(0,7)===hoyISO().slice(0,7)).reduce((s,g)=>s+g.monto,0);
+
+  return `
+    <h2>Compras y gastos</h2>
+    <p class="sub">Mandado, gas, desechables… todo lo que sale de la caja.</p>
+    <div class="tarjetas">
+      <div class="tarjeta"><div class="etq">Gastado este mes</div><div class="num rojo">${MX(totalMes)}</div></div>
+    </div>
+    <div class="panel">
+      <h3>Registrar gasto</h3>
+      <div class="fila-form">
+        <label class="campo">Concepto<input id="gConcepto" placeholder="Mandado del día"></label>
+        <label class="campo" style="max-width:170px">Categoría
+          <select id="gCat"><option>Mandado</option><option>Gas</option><option>Desechables</option><option>Transporte</option><option>Otro</option></select>
+        </label>
+        <label class="campo" style="max-width:170px">Fecha<input id="gFecha" type="date" value="${hoyISO()}"></label>
+        <label class="campo" style="max-width:130px">Monto<input id="gMonto" type="number" min="0" step="0.5" placeholder="350"></label>
+        <button class="btn" id="btnAddGasto">Agregar</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="tabla-scroll">
+      ${D.gastos.length ? `<table><thead><tr><th>Fecha</th><th>Concepto</th><th>Categoría</th><th class="num-td">Monto</th><th></th></tr></thead><tbody>${filas}</tbody></table>` : `<div class="vacio">Sin gastos registrados.</div>`}
+      </div>
+    </div>`;
+}
+
+/* ---------- HIELERA ---------- */
+function catsDisponibles(){
+  return [...new Set(D.productos.map(p=>p.cat))];
+}
+function opcionesGuiso(cat){
+  return D.productos.filter(p=>p.cat===cat)
+    .map(p=>`<option value="${p.id}">${escapa(p.sabor||p.nombre)}</option>`).join('');
+}
+function vistaHielera(){
+  const hoy = hoyISO();
+  const cats = catsDisponibles();
+
+  // cortes del día
+  const entradasHoy = D.movimientos.filter(m=>m.fecha===hoy&&m.tipo==='Entrada').reduce((s,m)=>s+m.cantidad,0);
+  const salidasHoy = D.movimientos.filter(m=>m.fecha===hoy&&m.tipo==='Salida').reduce((s,m)=>s+m.cantidad,0);
+  const mermasHoy = D.movimientos.filter(m=>m.fecha===hoy&&m.tipo==='Merma').reduce((s,m)=>s+m.cantidad,0);
+  const vendidosHoy = D.ventas.filter(v=>v.fecha===hoy).reduce((s,v)=>s+v.cantidad,0);
+  const enHielera = D.productos.reduce((s,p)=>s+p.stock,0);
+  const paraManana = D.productos.reduce((s,p)=>{
+    if(p.stock<=0 || !p.fechaHielera) return s;
+    return frescura(p.fechaHielera).clase==='fresco' ? s+p.stock : s;
+  },0);
+
+  // inventario actual agrupado por categoría
+  const filasInv = cats.map(cat=>{
+    const prods = D.productos.filter(p=>p.cat===cat);
+    return prods.map(p=>{
+      let estado, accion='';
+      if(p.stock<=0){
+        estado = `<span style="color:var(--gris);font-size:12px">Vacío</span>`;
+      } else {
+        const fr = frescura(p.fechaHielera||hoy);
+        if(fr.clase==='fresco'){
+          estado = `<span class="pill fresco">✅ Sirve para mañana</span>`;
+        } else if(fr.clase==='venderhoy'){
+          estado = `<span class="pill venderhoy">⚠️ De ayer · vender HOY</span>`;
+        } else {
+          estado = `<span class="pill novender">⛔ ${fr.dias} días · ya no</span>`;
+          accion = `<button class="btn peligro mini" data-merma-todo="${p.id}">→ Merma (${p.stock})</button>`;
+        }
+      }
+      return `<tr>
+        <td><span class="pill ${p.cat==='Burro'?'burro':'torta'}">${escapa(p.cat)}</span></td>
+        <td><strong>${escapa(p.sabor||p.nombre)}</strong></td>
+        <td class="num-td" style="font-size:16px"><strong>${p.stock}</strong></td>
+        <td>${p.stock>0 && p.fechaHielera ? fechaBonita(p.fechaHielera) : '—'}</td>
+        <td>${estado}</td>
+        <td>${accion}</td>
+      </tr>`;
+    }).join('');
+  }).join('');
+
+  const filasLog = D.movimientos.slice().reverse().slice(0,30).map(m=>`
+    <tr>
+      <td>${fechaBonitaAnio(m.fecha)}</td>
+      <td>${escapa(m.producto)}</td>
+      <td><span class="pill ${m.tipo==='Entrada'?'entrada':(m.tipo==='Merma'?'merma':'salida')}">${m.tipo}</span></td>
+      <td class="num-td">${m.cantidad}</td>
+      <td style="color:var(--gris);font-size:13px">${escapa(m.nota||'')}</td>
+      <td><button class="btn peligro mini" data-del-mov="${m.id}">✕</button></td>
+    </tr>`).join('');
+
+  const opsCat = cats.map(c=>`<option>${escapa(c)}</option>`).join('');
+
+  return `
+    <h2>Hielera</h2>
+    <p class="sub">Control de lo que entra, lo que sale y lo que queda para vender mañana. Lo fresco de hoy sirve mañana; lo de ayer se vende hoy; con 2 días se va a merma.</p>
+    <div class="tarjetas">
+      <div class="tarjeta"><div class="etq">En hielera ahora</div><div class="num">${enHielera}</div></div>
+      <div class="tarjeta"><div class="etq">✅ Sirve para mañana</div><div class="num verde">${paraManana}</div></div>
+      <div class="tarjeta"><div class="etq">Entró hoy</div><div class="num verde">${entradasHoy}</div></div>
+      <div class="tarjeta"><div class="etq">Vendido hoy</div><div class="num">${vendidosHoy}</div></div>
+      <div class="tarjeta"><div class="etq">Salidas hoy</div><div class="num ambar">${salidasHoy}</div></div>
+      <div class="tarjeta"><div class="etq">Mermas hoy</div><div class="num rojo">${mermasHoy}</div></div>
+    </div>
+    <div class="panel">
+      <h3>📋 Lo que hay en la hielera ahorita</h3>
+      <div class="tabla-scroll">
+      <table>
+        <thead><tr><th>Tipo</th><th>De qué (guiso)</th><th class="num-td">Quedan</th><th>Entró el</th><th>¿Sirve para mañana?</th><th></th></tr></thead>
+        <tbody>${filasInv}</tbody>
+      </table>
+      </div>
+      <p style="color:var(--gris);font-size:12px;margin-top:10px">💡 Las ventas descuentan de aquí automáticamente. Cuando algo llega a 2 días, aparece el botón <strong>→ Merma</strong> para sacarlo de un toque.</p>
+    </div>
+    <div class="panel">
+      <h3>Registrar movimiento</h3>
+      <div class="fila-form">
+        <label class="campo" style="max-width:130px">Tipo<select id="mCat">${opsCat}</select></label>
+        <label class="campo">De qué (guiso)<select id="mProd">${opcionesGuiso(cats[0]||'')}</select></label>
+        <label class="campo" style="max-width:170px">Movimiento
+          <select id="mTipo">
+            <option value="Entrada">Entrada (mandado)</option>
+            <option value="Salida">Salida</option>
+            <option value="Merma">Merma</option>
+          </select>
+        </label>
+        <label class="campo" style="max-width:160px">Fecha<input id="mFecha" type="date" value="${hoyISO()}"></label>
+        <label class="campo" style="max-width:110px">Cantidad<input id="mCant" type="number" min="1" value="1"></label>
+        <label class="campo">Nota (opcional)<input id="mNota" placeholder="Ej. se apartaron 8"></label>
+        <button class="btn" id="btnAddMov">Registrar</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Historial de movimientos</h3>
+      <div class="tabla-scroll">
+      ${D.movimientos.length ? `<table><thead><tr><th>Fecha</th><th>Producto</th><th>Movimiento</th><th class="num-td">Cant.</th><th>Nota</th><th></th></tr></thead><tbody>${filasLog}</tbody></table>` : `<div class="vacio">Sin movimientos todavía.</div>`}
+      </div>
+    </div>`;
+}
+
+/* ---------- eventos ---------- */
+let ventaSel = null, ventaQty = 1, ventaPago = 'Efectivo';
+const dlg = document.getElementById('dlgVenta');
+
+function enganchar(){
+  const m = document.getElementById('main');
+
+  const fc = document.getElementById('fechaCaja');
+  if(fc) fc.onchange = e=>{ fechaCaja = e.target.value || hoyISO(); render(); };
+  const bh = document.getElementById('btnHoy');
+  if(bh) bh.onclick = ()=>{ fechaCaja = hoyISO(); render(); };
+
+  // semana
+  const sa = document.getElementById('semAnt');
+  if(sa) sa.onclick = ()=>{ semanaLunes = sumaDias(semanaLunes,-7); render(); };
+  const ss = document.getElementById('semSig');
+  if(ss) ss.onclick = ()=>{ semanaLunes = sumaDias(semanaLunes,7); render(); };
+  const sh = document.getElementById('semHoy');
+  if(sh) sh.onclick = ()=>{ semanaLunes = lunesDe(hoyISO()); render(); };
+  const be = document.getElementById('btnExportar');
+  if(be) be.onclick = ()=>exportarRespaldo();
+  const fi = document.getElementById('fondoInput');
+  if(fi) fi.onchange = async e=>{
+    D.config.fondo = Math.max(0, parseFloat(e.target.value)||0);
+    await guardar(); render(); aviso(`Fondo de caja: ${MX(D.config.fondo)}`);
+  };
+
+  m.querySelectorAll('[data-vender]').forEach(b=>b.onclick = ()=>abrirVenta(b.dataset.vender));
+
+  /* --- ticket / carrito --- */
+  m.querySelectorAll('[data-cart-add]').forEach(b=>b.onclick = ()=>{
+    const pid = b.dataset.cartAdd;
+    const p = D.productos.find(x=>x.id===pid);
+    if(!p) return;
+    if(p.stock>0 && p.fechaHielera && frescura(p.fechaHielera).clase==='novender'){
+      if(!confirm(`⛔ ${p.nombre} tiene 2+ días en la hielera. ¿Seguro que lo quieres vender?`)) return;
+    }
+    carrito[pid] = (carrito[pid]||0) + 1;
+    render();
+  });
+  m.querySelectorAll('[data-cart-mas]').forEach(b=>b.onclick = ()=>{
+    carrito[b.dataset.cartMas]++; render();
+  });
+  m.querySelectorAll('[data-cart-menos]').forEach(b=>b.onclick = ()=>{
+    const pid = b.dataset.cartMenos;
+    carrito[pid]--;
+    if(carrito[pid]<=0) delete carrito[pid];
+    render();
+  });
+  m.querySelectorAll('[data-cart-quitar]').forEach(b=>b.onclick = ()=>{
+    delete carrito[b.dataset.cartQuitar]; render();
+  });
+  m.querySelectorAll('[data-cart-pago]').forEach(b=>b.onclick = ()=>{
+    carritoPago = b.dataset.cartPago; render();
+  });
+  const bv = document.getElementById('btnVaciarTicket');
+  if(bv) bv.onclick = ()=>{ carrito = {}; render(); };
+  const bc = document.getElementById('btnCobrarTicket');
+  if(bc) bc.onclick = async ()=>{
+    const entradas = Object.entries(carrito);
+    if(!entradas.length) return;
+    const d = new Date();
+    const hora = d.toTimeString().slice(0,5);
+    const tid = uid();
+    let total = 0, piezas = 0;
+    entradas.forEach(([pid,cant])=>{
+      const p = D.productos.find(x=>x.id===pid);
+      if(!p) return;
+      D.ventas.push({
+        id: uid(), ticket: tid, fecha: hoyISO(), hora,
+        productoId: p.id, producto: p.nombre,
+        cantidad: cant, precio: p.precio,
+        total: p.precio*cant, pago: carritoPago
+      });
+      p.stock = Math.max(0, p.stock - cant);
+      if(p.stock===0) p.fechaHielera = null;
+      total += p.precio*cant; piezas += cant;
+    });
+    carrito = {};
+    await guardar(); render();
+    aviso(`✅ Ticket cobrado: ${piezas} pieza${piezas===1?'':'s'} · ${MX(total)} · ${carritoPago}`);
+  };
+
+  /* --- meta del día --- */
+  const mi = document.getElementById('metaInput');
+  if(mi) mi.onchange = async e=>{
+    D.config.metaDia = Math.max(0, parseFloat(e.target.value)||0);
+    await guardar(); render(); aviso(`🎯 Meta del día: ${MX(D.config.metaDia)}`);
+  };
+
+  /* --- cierre del día --- */
+  const bcd = document.getElementById('btnCerrarDia');
+  if(bcd) bcd.onclick = async ()=>{
+    const contado = num('cierreContado');
+    const vs2 = D.ventas.filter(v=>v.fecha===fechaCaja);
+    const gs2 = D.gastos.filter(g=>g.fecha===fechaCaja);
+    const esperado = vs2.filter(v=>v.pago==='Efectivo').reduce((s,v)=>s+v.total,0) - gs2.reduce((s,g)=>s+g.monto,0);
+    const dif = Math.round((contado - esperado)*100)/100;
+    D.cierres = D.cierres.filter(c=>c.fecha!==fechaCaja);
+    D.cierres.push({ fecha: fechaCaja, esperado, contado, diferencia: dif });
+    await guardar(); render();
+    aviso(dif===0 ? '✅ ¡La caja cuadró perfecto!' : dif>0 ? `Sobraron ${MX(dif)} 🤔` : `Faltaron ${MX(-dif)} ⚠️`);
+  };
+  const brc = document.getElementById('btnReabrirCierre');
+  if(brc) brc.onclick = async ()=>{
+    D.cierres = D.cierres.filter(c=>c.fecha!==fechaCaja);
+    await guardar(); render();
+  };
+
+  /* --- encargos y fiados --- */
+  const bae = document.getElementById('btnAddEncargo');
+  if(bae) bae.onclick = async ()=>{
+    const cliente = val('eCliente'); if(!cliente) return aviso('Pon el nombre del cliente');
+    const total = num('eTotal'); if(total<=0) return aviso('Pon el total del pedido');
+    const anticipo = Math.min(total, Math.max(0, num('eAnticipo')));
+    const enc = {
+      id: uid(), cliente, tel: val('eTel'), tipo: val('eTipo'),
+      pedido: val('ePedido'), fechaEntrega: val('eFecha'),
+      total, anticipo, pagado: anticipo>=total, entregado: false,
+      creado: hoyISO()
+    };
+    D.encargos.push(enc);
+    if(anticipo>0){
+      const d = new Date();
+      D.ventas.push({
+        id: uid(), fecha: hoyISO(), hora: d.toTimeString().slice(0,5),
+        productoId: null, producto: `Anticipo · ${cliente}`,
+        cantidad: 1, precio: anticipo, total: anticipo, pago: 'Efectivo'
+      });
+    }
+    await guardar(); render();
+    aviso(anticipo>0 ? `📝 Encargo guardado. Anticipo de ${MX(anticipo)} registrado en caja.` : '📝 Encargo guardado ✅');
+  };
+  m.querySelectorAll('[data-enc-cobrar]').forEach(b=>b.onclick = async ()=>{
+    const e = D.encargos.find(x=>x.id===b.dataset.encCobrar);
+    if(!e) return;
+    const saldo = Math.max(0, e.total - (e.anticipo||0));
+    if(saldo<=0){ e.pagado = true; await guardar(); render(); return; }
+    const efectivo = confirm(`Cobrar ${MX(saldo)} a ${e.cliente}.\n\nAceptar = Efectivo · Cancelar = Transferencia`);
+    const d = new Date();
+    D.ventas.push({
+      id: uid(), fecha: hoyISO(), hora: d.toTimeString().slice(0,5),
+      productoId: null, producto: `${e.tipo} · ${e.cliente}`,
+      cantidad: 1, precio: saldo, total: saldo, pago: efectivo?'Efectivo':'Transferencia'
+    });
+    e.pagado = true;
+    await guardar(); render();
+    aviso(`💵 Cobrado ${MX(saldo)} de ${e.cliente} · ya está en tu caja de hoy`);
+  });
+  m.querySelectorAll('[data-enc-entregar]').forEach(b=>b.onclick = async ()=>{
+    const e = D.encargos.find(x=>x.id===b.dataset.encEntregar);
+    if(!e) return;
+    e.entregado = true;
+    await guardar(); render(); aviso(`📦 Entregado a ${e.cliente} ✅`);
+  });
+  m.querySelectorAll('[data-enc-borrar]').forEach(b=>b.onclick = async ()=>{
+    if(!confirm('¿Borrar este encargo? (Las ventas ya cobradas no se borran de la caja)')) return;
+    D.encargos = D.encargos.filter(x=>x.id!==b.dataset.encBorrar);
+    await guardar(); render();
+  });
+
+  m.querySelectorAll('[data-del-venta]').forEach(b=>b.onclick = async ()=>{
+    const v = D.ventas.find(x=>x.id===b.dataset.delVenta);
+    if(!v) return;
+    if(!confirm('¿Borrar esta venta? El stock se devolverá.')) return;
+    const p = D.productos.find(x=>x.id===v.productoId);
+    if(p) p.stock += v.cantidad;
+    D.ventas = D.ventas.filter(x=>x.id!==v.id);
+    await guardar(); render(); aviso('Venta eliminada');
+  });
+
+  m.querySelectorAll('[data-del-gasto]').forEach(b=>b.onclick = async ()=>{
+    if(!confirm('¿Borrar este gasto?')) return;
+    D.gastos = D.gastos.filter(x=>x.id!==b.dataset.delGasto);
+    await guardar(); render(); aviso('Gasto eliminado');
+  });
+
+  m.querySelectorAll('[data-del-prod]').forEach(b=>b.onclick = async ()=>{
+    if(!confirm('¿Borrar este producto del menú?')) return;
+    D.productos = D.productos.filter(x=>x.id!==b.dataset.delProd);
+    await guardar(); render();
+  });
+
+  m.querySelectorAll('[data-del-mov]').forEach(b=>b.onclick = async ()=>{
+    if(!confirm('¿Borrar este movimiento? El stock NO se revierte automáticamente.')) return;
+    D.movimientos = D.movimientos.filter(x=>x.id!==b.dataset.delMov);
+    await guardar(); render();
+  });
+
+  m.querySelectorAll('[data-stock]').forEach(b=>b.onclick = async ()=>{
+    const p = D.productos.find(x=>x.id===b.dataset.id);
+    if(!p) return;
+    p.stock = Math.max(0, p.stock + Number(b.dataset.stock));
+    await guardar(); render();
+  });
+
+  // refri
+  m.querySelectorAll('[data-nivel]').forEach(s=>s.onchange = async ()=>{
+    const g = D.guisos.find(x=>x.id===s.dataset.nivel);
+    if(!g) return;
+    g.nivel = s.value;
+    await guardar(); render();
+    aviso(g.nivel==='Bien' ? `${g.nombre}: todo bien ✅` : `${g.nombre} agregado a la lista de compras 🛒`);
+  });
+  m.querySelectorAll('[data-nota]').forEach(i=>i.onchange = async ()=>{
+    const g = D.guisos.find(x=>x.id===i.dataset.nota);
+    if(!g) return;
+    g.nota = i.value.trim();
+    await guardar();
+  });
+  m.querySelectorAll('[data-renovar]').forEach(b=>b.onclick = async ()=>{
+    const g = D.guisos.find(x=>x.id===b.dataset.renovar);
+    if(!g) return;
+    g.fecha = hoyISO();
+    if(g.nivel==='Se acabó') g.nivel = 'Bien';
+    await guardar(); render(); aviso(`🍳 ${g.nombre} renovado: fresco de hoy`);
+  });
+  m.querySelectorAll('[data-del-guiso]').forEach(b=>b.onclick = async ()=>{
+    if(!confirm('¿Quitar este guiso del refri?')) return;
+    D.guisos = D.guisos.filter(x=>x.id!==b.dataset.delGuiso);
+    await guardar(); render();
+  });
+  const bgs = document.getElementById('btnAddGuiso');
+  if(bgs) bgs.onclick = async ()=>{
+    const nombre = val('gsNombre'); if(!nombre) return aviso('Ponle nombre al guiso');
+    D.guisos.push({ id:uid(), nombre, fecha:val('gsFecha')||hoyISO(), nivel:val('gsNivel'), nota:'' });
+    await guardar(); render(); aviso('Guiso agregado al refri ✅');
+  };
+
+  const bp = document.getElementById('btnAddProd');
+  if(bp) bp.onclick = async ()=>{
+    const nombre = val('pNombre'); if(!nombre) return aviso('Ponle nombre al producto');
+    D.productos.push({
+      id: uid(), nombre,
+      cat: val('pCat'), sabor: val('pSabor'),
+      costo: num('pCosto'), precio: num('pPrecio'),
+      stock: Math.max(0, num('pStock')), min: Math.max(0, num('pMin'))
+    });
+    await guardar(); render(); aviso('Producto agregado ✅');
+  };
+
+  const bg = document.getElementById('btnAddGasto');
+  if(bg) bg.onclick = async ()=>{
+    const concepto = val('gConcepto'); const monto = num('gMonto');
+    if(!concepto) return aviso('Escribe el concepto');
+    if(monto<=0) return aviso('Pon el monto del gasto');
+    D.gastos.push({ id:uid(), concepto, cat:val('gCat'), fecha:val('gFecha')||hoyISO(), monto });
+    await guardar(); render(); aviso('Gasto registrado ✅');
+  };
+
+  // hielera: al cambiar Burro/Torta se filtran los guisos
+  const mc = document.getElementById('mCat');
+  if(mc) mc.onchange = ()=>{
+    const sel = document.getElementById('mProd');
+    if(sel) sel.innerHTML = opcionesGuiso(mc.value);
+  };
+
+  const bm = document.getElementById('btnAddMov');
+  if(bm) bm.onclick = async ()=>{
+    const p = D.productos.find(x=>x.id===val('mProd'));
+    if(!p) return aviso('Elige un guiso');
+    const cant = Math.max(1, num('mCant'));
+    const tipo = val('mTipo');
+    const fecha = val('mFecha')||hoyISO();
+    if(tipo==='Entrada'){
+      p.stock += cant;
+      // lo que entra define la frescura de lo que hay
+      if(!p.fechaHielera || fecha > p.fechaHielera) p.fechaHielera = fecha;
+      if(p.stock===cant) p.fechaHielera = fecha;
+    } else {
+      p.stock = Math.max(0, p.stock - cant);
+      if(p.stock===0) p.fechaHielera = null;
+    }
+    D.movimientos.push({ id:uid(), fecha, productoId:p.id, producto:p.nombre, tipo, cantidad:cant, nota:val('mNota') });
+    await guardar(); render(); aviso(`${tipo}: ${cant} × ${p.nombre} · quedan ${p.stock}`);
+  };
+
+  // merma total de lo que ya tiene 2+ días
+  m.querySelectorAll('[data-merma-todo]').forEach(b=>b.onclick = async ()=>{
+    const p = D.productos.find(x=>x.id===b.dataset.mermaTodo);
+    if(!p || p.stock<=0) return;
+    if(!confirm(`¿Mandar a merma los ${p.stock} de ${p.nombre}? Ya tienen 2+ días.`)) return;
+    D.movimientos.push({ id:uid(), fecha:hoyISO(), productoId:p.id, producto:p.nombre, tipo:'Merma', cantidad:p.stock, nota:'Merma por 2+ días' });
+    p.stock = 0;
+    p.fechaHielera = null;
+    await guardar(); render(); aviso(`🗑️ ${p.nombre} a merma. Hielera limpia.`);
+  });
+}
+
+function val(id){ const e=document.getElementById(id); return e? e.value.trim():''; }
+function num(id){ const v=parseFloat(val(id)); return isNaN(v)?0:v; }
+function escapa(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- exportar respaldo a Excel ---------- */
+function exportarRespaldo(){
+  try{
+    if(typeof XLSX === 'undefined'){
+      aviso('⚠️ No cargó el módulo de Excel. Revisa tu internet y vuelve a intentar.');
+      return;
+    }
+    const wb = XLSX.utils.book_new();
+
+    // Ventas
+    const hVentas = D.ventas.map(v=>({
+      'Fecha': v.fecha, 'Hora': v.hora||'', 'Producto': v.producto,
+      'Cantidad': v.cantidad, 'Precio unitario': v.precio,
+      'Total': v.total, 'Forma de pago': v.pago
+    }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(hVentas.length?hVentas:[{'Fecha':'','Hora':'','Producto':'','Cantidad':'','Precio unitario':'','Total':'','Forma de pago':''}]), 'Ventas');
+
+    // Gastos
+    const hGastos = D.gastos.map(g=>({
+      'Fecha': g.fecha, 'Concepto': g.concepto, 'Categoría': g.cat, 'Monto': g.monto
+    }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(hGastos.length?hGastos:[{'Fecha':'','Concepto':'','Categoría':'','Monto':''}]), 'Gastos');
+
+    // Hielera
+    const hMov = D.movimientos.map(m=>({
+      'Fecha': m.fecha, 'Producto': m.producto, 'Movimiento': m.tipo,
+      'Cantidad': m.cantidad, 'Nota': m.nota||''
+    }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(hMov.length?hMov:[{'Fecha':'','Producto':'','Movimiento':'','Cantidad':'','Nota':''}]), 'Hielera');
+
+    // Productos
+    const hProd = D.productos.map(p=>({
+      'Producto': p.nombre, 'Categoría': p.cat, 'Guiso': p.sabor,
+      'Costo': p.costo, 'Precio': p.precio, 'Ganancia por pieza': p.precio-p.costo,
+      'Stock': p.stock, 'Stock mínimo': p.min
+    }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(hProd), 'Productos');
+
+    // Encargos y fiados
+    const hEnc = D.encargos.map(e=>({
+      'Cliente': e.cliente, 'Teléfono': e.tel||'', 'Tipo': e.tipo,
+      'Pedido': e.pedido, 'Entrega': e.fechaEntrega||'',
+      'Total': e.total, 'Anticipo': e.anticipo||0,
+      'Pagado': e.pagado?'Sí':'No', 'Entregado': e.entregado?'Sí':'No'
+    }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(hEnc.length?hEnc:[{'Cliente':'','Teléfono':'','Tipo':'','Pedido':'','Entrega':'','Total':'','Anticipo':'','Pagado':'','Entregado':''}]), 'Encargos');
+
+    // Cierres de caja
+    const hCie = D.cierres.slice().sort((a,b)=>a.fecha.localeCompare(b.fecha)).map(c=>({
+      'Fecha': c.fecha, 'Efectivo esperado': c.esperado,
+      'Efectivo contado': c.contado, 'Diferencia': c.diferencia
+    }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(hCie.length?hCie:[{'Fecha':'','Efectivo esperado':'','Efectivo contado':'','Diferencia':''}]), 'Cierres de caja');
+
+    // Resumen por semana (Lun–Sáb)
+    const semanas = {};
+    D.ventas.forEach(v=>{
+      const lun = lunesDe(v.fecha);
+      if(!semanas[lun]) semanas[lun] = {ventas:0, gastos:0, piezas:0, mermas:0};
+      semanas[lun].ventas += v.total;
+      semanas[lun].piezas += v.cantidad;
+    });
+    D.gastos.forEach(g=>{
+      const lun = lunesDe(g.fecha);
+      if(!semanas[lun]) semanas[lun] = {ventas:0, gastos:0, piezas:0, mermas:0};
+      semanas[lun].gastos += g.monto;
+    });
+    D.movimientos.filter(m=>m.tipo==='Merma').forEach(m=>{
+      const lun = lunesDe(m.fecha);
+      if(!semanas[lun]) semanas[lun] = {ventas:0, gastos:0, piezas:0, mermas:0};
+      semanas[lun].mermas += m.cantidad;
+    });
+    const fondo = D.config.fondo||0;
+    const hSem = Object.keys(semanas).sort().map(lun=>({
+      'Semana (lunes)': lun,
+      'a sábado': sumaDias(lun,5),
+      'Fondo inicial': fondo,
+      'Ventas': semanas[lun].ventas,
+      'Gastos': semanas[lun].gastos,
+      'Ganancia': semanas[lun].ventas - semanas[lun].gastos,
+      'Caja al cierre': fondo + semanas[lun].ventas - semanas[lun].gastos,
+      'Piezas vendidas': semanas[lun].piezas,
+      'Piezas a merma': semanas[lun].mermas
+    }));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(hSem.length?hSem:[{'Semana (lunes)':'','a sábado':'','Fondo inicial':'','Ventas':'','Gastos':'','Ganancia':'','Caja al cierre':'','Piezas vendidas':'','Piezas a merma':''}]), 'Resumen semanal');
+
+    XLSX.writeFile(wb, `cochirosso-respaldo-${hoyISO()}.xlsx`);
+    aviso('📥 Respaldo descargado ✅ Guárdalo en un lugar seguro.');
+  }catch(e){
+    aviso('⚠️ Hubo un problema al exportar. Intenta de nuevo.');
+  }
+}
+
+/* ---------- diálogo de venta ---------- */
+function abrirVenta(id){
+  ventaSel = D.productos.find(p=>p.id===id);
+  if(!ventaSel) return;
+  ventaQty = 1; ventaPago = 'Efectivo';
+  document.getElementById('dlgVentaTitulo').textContent = ventaSel.nombre;
+  const alertaEl = document.getElementById('dlgVentaAlerta');
+  if(ventaSel.stock>0 && ventaSel.fechaHielera){
+    const fr = frescura(ventaSel.fechaHielera);
+    if(fr.clase==='novender') alertaEl.innerHTML = `<span class="pill novender">⛔ Esto tiene ${fr.dias} días en la hielera. ¡Ya no se vende! Mándalo a merma en 🧊 Hielera.</span>`;
+    else if(fr.clase==='venderhoy') alertaEl.innerHTML = `<span class="pill venderhoy">⚠️ Es de ayer: hay que venderlo hoy sí o sí.</span>`;
+    else alertaEl.innerHTML = '';
+  } else alertaEl.innerHTML = '';
+  actualizarDlg();
+  dlg.querySelectorAll('[data-pago]').forEach(b=>b.classList.toggle('sel', b.dataset.pago==='Efectivo'));
+  dlg.showModal();
+}
+function actualizarDlg(){
+  document.getElementById('qNum').textContent = ventaQty;
+  document.getElementById('dlgVentaPrecio').textContent =
+    `${MX(ventaSel.precio)} c/u · Total: ${MX(ventaSel.precio*ventaQty)}`;
+}
+document.getElementById('qMenos').onclick = ()=>{ ventaQty=Math.max(1,ventaQty-1); actualizarDlg(); };
+document.getElementById('qMas').onclick = ()=>{ ventaQty++; actualizarDlg(); };
+dlg.querySelectorAll('[data-pago]').forEach(b=>b.onclick = ()=>{
+  ventaPago = b.dataset.pago;
+  dlg.querySelectorAll('[data-pago]').forEach(x=>x.classList.toggle('sel', x===b));
+});
+document.getElementById('dlgCancelar').onclick = ()=>dlg.close();
+document.getElementById('dlgConfirmar').onclick = async ()=>{
+  const d = new Date();
+  const hora = d.toTimeString().slice(0,5);
+  D.ventas.push({
+    id: uid(), fecha: hoyISO(), hora,
+    productoId: ventaSel.id, producto: ventaSel.nombre,
+    cantidad: ventaQty, precio: ventaSel.precio,
+    total: ventaSel.precio*ventaQty, pago: ventaPago
+  });
+  ventaSel.stock = Math.max(0, ventaSel.stock - ventaQty);
+  if(ventaSel.stock===0) ventaSel.fechaHielera = null;
+  dlg.close();
+  await guardar(); render();
+  aviso(`✅ Venta: ${ventaQty} × ${ventaSel.nombre} · ${MX(ventaSel.precio*ventaQty)}`);
+};
+
+cargar();
+</script>
+</body>
+</html>
